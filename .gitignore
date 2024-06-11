@@ -50,3 +50,4 @@ __azurite_db*__.json
 # other
 .history/
 .vscode/
+car_sales_info.csv
