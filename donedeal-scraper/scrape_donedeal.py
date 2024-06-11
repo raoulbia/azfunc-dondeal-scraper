@@ -92,13 +92,6 @@ def append_to_parquet(df, filename):
         output_stream.seek(0)
         blob_client.upload_blob(output_stream, overwrite=True)
 
-# Example usage
-url = "your_website_url"
-xpath = "your_xpath"
-filename = 'scraped_data.csv'
-df_new = scrape_data(url, xpath)
-append_to_parquet(df_new, filename)
-
 
 # Example usage
 xpath = "//*[@id='__next']/div[1]/div[4]/div/div/div[2]/ul/li"
