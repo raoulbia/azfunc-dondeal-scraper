@@ -38,9 +38,10 @@ jobs:
 
       # Optional: Add step to run tests here
 
-      - name: Zip artifact for deployment
+      - name: Package the Function App
         run: |
-          zip -r release.zip ./* -x '*.git*' '*.github*' 'venv/*'
+          cd ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          zip -r ../../release.zip ./* -x '*.git*' '*.github*' 'venv/*'
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
@@ -82,4 +83,4 @@ jobs:
         uses: Azure/functions-action@v1
         with:
           app-name: 'azfunc-donedeal-scraper'
-          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          package: '.'
