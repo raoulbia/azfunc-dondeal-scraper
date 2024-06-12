@@ -1,10 +1,10 @@
 import logging
 import azure.functions as func
-from scrape_donedeal import scrape_function  # Adjust the import based on your actual function
 
-def main(mytimer: func.TimerRequest) -> None:
-    logging.info('Python timer trigger function started.')
+def main(req: func.HttpRequest) -> func.HttpResponse:
+    logging.info('Python HTTP trigger function processed a request.')
 
-    scrape_function()  # Call your scraping function
+    # Your scraping code
+    result = "Scraping done"
 
-    logging.info('Python timer trigger function completed.')
+    return func.HttpResponse(result, status_code=200)
