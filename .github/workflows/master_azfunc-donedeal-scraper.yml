@@ -41,13 +41,13 @@ jobs:
       - name: Package the Function App
         run: |
           cd ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          zip -r ../../function_app.zip ./* -x '*.git*' '*.github*' 'venv/*'
+          zip -r $GITHUB_WORKSPACE/function_app.zip ./* -x '*.git*' '*.github*' 'venv/*'
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: function_app
-          path: ../function_app.zip
+          path: function_app.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -83,4 +83,4 @@ jobs:
         uses: Azure/functions-action@v1
         with:
           app-name: 'azfunc-donedeal-scraper'
-          package: './function_app.zip'
+          package: 'function_app.zip'
