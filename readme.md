@@ -244,3 +244,53 @@ Note: The "Storage Blob Data Contributor" role allows you to read, write, and de
 After ensuring the correct roles are assigned, retry accessing the storage account container pane. Note that it may take a few minutes for the role assignments to take effect.
 
 
+Sure, here’s a summary of the issues faced and tips for future similar implementations in Markdown format:
+
+```markdown
+# Summary of Issues and Tips for Deploying Docker Images to Azure Function App Using GitHub Actions
+
+## Issues Faced
+
+1. **Azure CLI Login Error**:
+    - **Error Message**: `AADSTS700213: No matching federated identity record found for presented assertion subject...`
+    - **Solution**: Ensured correct configuration of federated credentials in Azure AD. Verified the subject identifier and audience.
+
+2. **Deprecated Argument Warning**:
+    - **Warning Message**: `Option '--deployment-container-image-name' has been deprecated and will be removed in a future release. Use '--image' instead.`
+    - **Solution**: Updated the command to use `--image` instead of the deprecated `--deployment-container-image-name`.
+
+3. **App Service Plan SKU Limitation**:
+    - **Error Message**: `There was a conflict. AlwaysOn cannot be set for this site as the plan does not allow it.`
+    - **Solution**: Initially attempted to use `S1` SKU which supports `AlwaysOn`. After clarification, we used the `B1` SKU to avoid unnecessary costs, but ultimately removed the `AlwaysOn` requirement as it was not needed.
+
+4. **Resource Not Found Error**:
+    - **Error Message**: `The Resource 'Microsoft.Web/serverFarms/...' under resource group '...' was not found.`
+    - **Solution**: Verified that the App Service Plan exists and is correctly referenced in the workflow.
+
+5. **Configuration Update Instead of Creation**:
+    - **Error Message**: Errors due to attempting to create an already existing Azure Function App.
+    - **Solution**: Modified the workflow to update the existing Azure Function App configuration with the new Docker image.
+
+## Tips for Future Implementations
+
+1. **Federated Identity Setup**:
+    - Ensure proper setup of federated credentials in Azure AD. Verify the subject identifier format and audience to avoid login issues.
+
+2. **Handling Deprecated Commands**:
+    - Stay updated with Azure CLI changes. Replace deprecated commands with recommended alternatives to avoid future issues.
+
+3. **App Service Plan Selection**:
+    - Choose the appropriate SKU based on the feature requirements (e.g., `AlwaysOn`). For cost-sensitive projects, select Basic or Free SKUs if advanced features are not needed.
+
+4. **Resource Verification**:
+    - Always verify the existence of resources like App Service Plans before attempting to create or update dependent services. This can be done using `az appservice plan show` and similar commands.
+
+5. **Updating Existing Resources**:
+    - When dealing with existing Azure resources, prefer updating configurations rather than recreating resources. This ensures smoother deployments and avoids conflicts.
+
+6. **Secrets Management**:
+    - Properly manage and reference secrets in GitHub Actions. Double-check that all necessary secrets are defined and correctly used in the workflow.
+
+7. **Testing in Staging Environment**:
+    - Before deploying to production, test your GitHub Actions workflow in a staging environment to catch and resolve issues early.
+
