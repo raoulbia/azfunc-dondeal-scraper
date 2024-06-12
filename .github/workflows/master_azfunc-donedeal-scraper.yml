@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: './donedeal-scraper'
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: './donedeal_scraper'
   PYTHON_VERSION: '3.9' # set this to the python version to use (supports 3.6, 3.7, 3.8, 3.9)
 
 jobs:
