@@ -25,10 +25,12 @@ jobs:
       - name: Create and start virtual environment
         run: |
           python -m venv venv
-          source venv/bin/activate
+          echo "Virtual environment created."
+          ls -al venv
 
       - name: Install dependencies
         run: |
+          source venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           # Verify installation
@@ -90,5 +92,4 @@ jobs:
 
       - name: Verify deployment
         run: |
-          source venv/bin/activate
           pip show selenium
