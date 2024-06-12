@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: './donedeal-scraper' 
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: './donedeal-scraper'
   PYTHON_VERSION: '3.9' # set this to the python version to use (supports 3.6, 3.7, 3.8, 3.9)
 
 jobs:
@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Setup Python version
         uses: actions/setup-python@v2
@@ -32,7 +32,7 @@ jobs:
           source venv/bin/activate
 
       - name: Install dependencies
-        run: | 
+        run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
@@ -41,13 +41,13 @@ jobs:
       - name: Package the Function App
         run: |
           cd ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          zip -r ../../release.zip ./* -x '*.git*' '*.github*' 'venv/*'
+          zip -r ../../function_app.zip ./* -x '*.git*' '*.github*' 'venv/*'
 
       - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
-          name: python-app
-          path: release.zip
+          name: function_app
+          path: ../function_app.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -59,12 +59,12 @@ jobs:
 
     steps:
       - name: Download artifact from build job
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v2
         with:
-          name: python-app
+          name: function_app
 
       - name: Unzip artifact for deployment
-        run: unzip python-app/release.zip
+        run: unzip function_app.zip
 
       - name: Login to Azure
         uses: azure/login@v1
@@ -83,4 +83,4 @@ jobs:
         uses: Azure/functions-action@v1
         with:
           app-name: 'azfunc-donedeal-scraper'
-          package: '.'
+          package: './function_app.zip'
