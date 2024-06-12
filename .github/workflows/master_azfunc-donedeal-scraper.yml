@@ -24,15 +24,10 @@ jobs:
       - name: Azure Login
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-          enable-AzPSSession: false
-          environment: azurecloud
-          allow-no-subscriptions: false
-          audience: api://AzureADTokenExchange
-          auth-type: SERVICE_PRINCIPAL
+          client-id: "${{ secrets.AZURE_CLIENT_ID }}"
+          client-secret: "${{ secrets.AZURE_CLIENT_SECRET }}"
+          tenant-id: "${{ secrets.AZURE_TENANT_ID }}"
+          subscription-id: "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
 
       - name: Tag and Push Docker image to ACR
         env:
@@ -41,6 +36,14 @@ jobs:
           docker tag myapp:latest ${{ secrets.AZURE_CONTAINER_REGISTRY }}.azurecr.io/myapp:latest
           az acr login --name ${{ secrets.AZURE_CONTAINER_REGISTRY }}
           docker push ${{ secrets.AZURE_CONTAINER_REGISTRY }}.azurecr.io/myapp:latest
+
+      - name: Ensure App Service Plan Exists
+        env:
+          AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          AZURE_APP_SERVICE_PLAN: ${{ secrets.AZURE_APP_SERVICE_PLAN }}
+        run: |
+          az appservice plan show --name ${{ secrets.AZURE_APP_SERVICE_PLAN }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} || \
+          az appservice plan create --name ${{ secrets.AZURE_APP_SERVICE_PLAN }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --sku B1 --location ${{ secrets.AZURE_LOCATION }}
 
       - name: Deploy to Azure Function
         env:
@@ -55,7 +58,7 @@ jobs:
                                 --storage-account ${{ secrets.AZURE_STORAGE_ACCOUNT }} \
                                 --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
                                 --plan ${{ secrets.AZURE_APP_SERVICE_PLAN }} \
-                                --deployment-container-image-name ${{ secrets.AZURE_CONTAINER_REGISTRY }}.azurecr.io/myapp:latest || \
+                                --image ${{ secrets.AZURE_CONTAINER_REGISTRY }}.azurecr.io/myapp:latest || \
           az functionapp update --name ${{ secrets.AZURE_FUNCTIONAPP_NAME }} \
                                 --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
-                                --deployment-container-image-name ${{ secrets.AZURE_CONTAINER_REGISTRY }}.azurecr.io/myapp:latest
+                                --set containerSettings.imageName=${{ secrets.AZURE_CONTAINER_REGISTRY }}.azurecr.io/myapp:latest
