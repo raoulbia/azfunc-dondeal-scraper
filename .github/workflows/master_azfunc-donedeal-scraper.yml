@@ -21,15 +21,13 @@ jobs:
         run: |
           docker build -t myapp:latest .
 
-      - name: Login to Azure
+      - name: Azure Login
         uses: azure/login@v1
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          audience: api://AzureADTokenExchange
-          enable-AzPSSession: false
-          auth-type: federated
 
       - name: Tag and Push Docker image to ACR
         env:
