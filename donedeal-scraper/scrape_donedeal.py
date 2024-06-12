@@ -93,10 +93,10 @@ def append_to_parquet(df, filename):
         blob_client.upload_blob(output_stream, overwrite=True)
 
 
-# Example usage
-xpath = "//*[@id='__next']/div[1]/div[4]/div/div/div[2]/ul/li"
-page_starts = [0,30,60,90]
-for i in page_starts:
-    url = f"https://www.donedeal.ie/cars/Audi/A3/Petrol?transmission=Automatic&bodyType=Saloon&year_from=2015&price_from=15000&price_to=25000&mileage_to=100000&engine_from=1400&engine_to=1800&start={i}"
-    df_new = scrape_data(url, xpath)
-    append_to_parquet(df_new, 'scraped_data.csv')
+def main():
+    xpath = "//*[@id='__next']/div[1]/div[4]/div/div/div[2]/ul/li"
+    page_starts = [0,30,60,90]
+    for i in page_starts:
+        url = f"https://www.donedeal.ie/cars/Audi/A3/Petrol?transmission=Automatic&bodyType=Saloon&year_from=2015&price_from=15000&price_to=25000&mileage_to=100000&engine_from=1400&engine_to=1800&start={i}"
+        df_new = scrape_data(url, xpath)
+        append_to_parquet(df_new, 'scraped_data.csv')
