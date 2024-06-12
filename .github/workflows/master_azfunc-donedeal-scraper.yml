@@ -6,6 +6,10 @@ on:
       - master
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,7 +21,7 @@ jobs:
         env:
           AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
         run: |
-          docker build -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}.azurecr.io/selenium:latest .
+          docker build --no-cache -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}.azurecr.io/selenium:latest .
 
       - name: Login to Azure Container Registry
         env:
@@ -51,11 +55,11 @@ jobs:
           AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
           AZURE_FUNCTIONAPP_NAME: ${{ secrets.AZURE_FUNCTIONAPP_NAME }}
           AZURE_LOCATION: ${{ secrets.AZURE_LOCATION }}
-          AZURE_APP_SERVICE_PLAN: ${{ secrets.AZURE_APP_SERVICE_PLAN }}
+          AZURE_APP_SERVICE_PLAN: "${{ secrets.AZURE_APP_SERVICE_PLAN }}"
           AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
         run: |
           az functionapp create --name ${{ secrets.AZURE_FUNCTIONAPP_NAME }} \
                                 --storage-account ${{ secrets.AZURE_STORAGE_ACCOUNT }} \
                                 --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
-                                --plan ${{ secrets.AZURE_APP_SERVICE_PLAN }} \
+                                --plan "${{ secrets.AZURE_APP_SERVICE_PLAN }}" \
                                 --deployment-container-image-name ${{ secrets.AZURE_CONTAINER_REGISTRY }}.azurecr.io/selenium:latest
